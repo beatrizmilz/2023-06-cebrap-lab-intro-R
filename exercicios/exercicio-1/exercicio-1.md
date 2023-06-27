@@ -32,7 +32,7 @@ Depois de instalar o R, podemos instalar o RStudio:
 Este outro link pode ajudar também:
 https://livro.curso-r.com/1-2-instalacao-do-rstudio.html
 
-ATENÇÃO: Caso tenha problemas com a instalação, peça ajuda no horário pré-aula (18h30-18h00).
+ATENÇÃO: Caso tenha problemas com a instalação, peça ajuda no horário pré-aula (18h30-19h00).
 
 
 ## Parte 2 - teórica:
@@ -49,7 +49,7 @@ As etapas a seguir são opcionais, mas caso você não esteja confortável com a
 
 ### Preparando o exercício
 
-1 - Crie um arquivo Rmd, e salve o mesmo com o nome `tarefa-1.Rmd`.
+1 - Crie um arquivo qmd (para relatórios), e salve o mesmo com o nome `tarefa-1.qmd`.
 
 2 - Nos metadados do arquivo (primeiras linhas), preencha seu nome, a data, e dê o título como `Tarefa 1 - Introdução ao R`.
 
@@ -65,7 +65,7 @@ Crie um campo de código (chunk), cole o código acima no seu script, para ter d
 
 Obs: Lembre-se de que códigos em R devem ser executados dentro de campos de código. Os textos deverão estar fora dos campos de código, ou precedidos por # (hashtag indica comentário). 
 
-### Pausa para uma lista que pode ajudar nos exercícios
+### Pausa para uma lista de funções que pode ajudar nos exercícios
 
 Nos exercícios a seguir, precisamos usar algumas funcões para calcular alguns valores. Algumas funções ainda não foram tratadas, mas segue aqui uma lista que pode ser útil:
 
