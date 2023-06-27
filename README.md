@@ -18,18 +18,6 @@ Para saber de próximos oferecimentos, entre em contato com
 
 - **Inscrições:** <https://cursos.cebrap.org.br/>
 
-- **Sobre o curso:** A linguagem de programação R é utilizada para
-  organização, análise e apresentação de dados. O curso apresentará a
-  linguagem R e o ambiente de desenvolvimento (IDE) RStudio. Serão
-  apresentados conceitos usando R base, e então falaremos em como fazer
-  algumas tarefas usando o pacote tidyverse, como: importar uma tabela
-  para o R, exportar uma tabela para o computador, selecionar colunas,
-  filtrar linhas, ordenar uma base de dados, transformar variáveis,
-  obter sumarização por grupos, obter estatísticas descritivas, gerar
-  gráficos simples, entre outros. O curso tem como público alvo pessoas
-  que tenham interesse em utilizar R para análise de dados. Todas as
-  ferramentas utilizadas são gratuitas.
-
 ## Materiais
 
 ### Slides
@@ -44,7 +32,9 @@ Para saber de próximos oferecimentos, entre em contato com
 
 Abaixo estão os scripts usados no RStudio após a aula:
 
-<!-- - [R Base](https://github.com/beatrizmilz/2023-06-cebrap-lab-intro-R/blob/main/materiais_rstudio_cloud_pos_aula/Topico-1-R-base/1-r-base.Rmde) -->
+- [R
+  Base](https://github.com/beatrizmilz/2023-06-cebrap-lab-intro-R/blob/main/scripts-pos-aula/1-r-base.qmd)
+
 <!-- - [Importação](https://github.com/beatrizmilz/2023-06-cebrap-lab-intro-R/blob/main/materiais_rstudio_cloud_pos_aula/Topico-2-importacao/2-importacao.Rmd) -->
 <!-- - [Manipulação](https://github.com/beatrizmilz/2023-06-cebrap-lab-intro-R/blob/main/materiais_rstudio_cloud_pos_aula/Topico-3-manipulacao/3-manipulacao.Rmd) -->
 <!-- - [Baixar zip completo](https://github.com/beatrizmilz/2023-06-cebrap-lab-intro-R/raw/main/material_completo.zip)  -->
@@ -58,6 +48,9 @@ Abaixo estão os scripts usados no RStudio após a aula:
 ### Links citados em aula
 
 ## Materiais para estudar mais
+
+- [Livro online, gratuito e em inglês: R for Data
+  Science](https://r4ds.hadley.nz/)
 
 - [Livro online e gratuito: Ciência de Dados em
   R](https://livro.curso-r.com/7-2-dplyr.html)
