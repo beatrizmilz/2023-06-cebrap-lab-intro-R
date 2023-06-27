@@ -55,19 +55,11 @@ As etapas a seguir são opcionais, mas caso você não esteja confortável com a
 
 3 - Aperte knit e veja o que acontece!
 
-4 - O vetor abaixo apresenta a esperança de vida por UF no Brasil em 2010:
-
-esp_vida_2010 <- c(71.63, 70.32, 73.8, 73.3, 71.97, 72.6, 77.35, 75.1, 74.6, 70.4, 
-74.25, 74.96, 75.3, 72.36, 72, 74.8, 72.32, 71.62, 75.1, 72.52, 
-75.38, 72.97, 73.51, 76.61, 75.69, 71.84, 72.56)
-
-Crie um campo de código (chunk), cole o código acima no seu script, para ter disponível o vetor como um objeto. Execute o código e veja se o objeto foi criado no seu environment.
-
-Obs: Lembre-se de que códigos em R devem ser executados dentro de campos de código. Os textos deverão estar fora dos campos de código, ou precedidos por # (hashtag indica comentário). 
-
 ### Pausa para uma lista de funções que pode ajudar nos exercícios
 
 Nos exercícios a seguir, precisamos usar algumas funcões para calcular alguns valores. Algumas funções ainda não foram tratadas, mas segue aqui uma lista que pode ser útil:
+
+nome_do_vetor <- c(valor, valor, valor) # - cria um objeto que armazena um conjunto de valores. chamamos isso de VETOR!
 
 class(nome_do_vetor) # - verificar a classe de um vetor
 
@@ -87,8 +79,18 @@ max(nome_do_vetor) # - para vetores numéricos. essa função retorna o maior va
 
 round(nome_do_vetor, numero_de_casas_decimais) # - para vetores numéricos. essa função retorna os valores do vetor arredondados. O segundo argumento define o número de casas decimais para ser usado no arredondamento.
 
-
 ### Respondendo perguntas com código
+
+4 - O vetor abaixo apresenta a esperança de vida por UF no Brasil em 2010:
+
+esp_vida_2010 <- c(71.63, 70.32, 73.8, 73.3, 71.97, 72.6, 77.35, 75.1, 74.6, 70.4, 
+74.25, 74.96, 75.3, 72.36, 72, 74.8, 72.32, 71.62, 75.1, 72.52, 
+75.38, 72.97, 73.51, 76.61, 75.69, 71.84, 72.56)
+
+Crie um campo de código (chunk), cole o código acima no seu script, para ter disponível o vetor como um objeto. Execute o código e veja se o objeto foi criado no seu environment.
+
+Obs: Lembre-se de que códigos em R devem ser executados dentro de campos de código. Os textos deverão estar fora dos campos de código, ou precedidos por # (hashtag indica comentário). 
+
 
 5 - Usando o vetor criado anteriormente, cole as perguntas abaixo no seu arquivo de relatório e responda utilizando funções do R. Lembre-se de colocar as respostas dentro de campos de código!
 
