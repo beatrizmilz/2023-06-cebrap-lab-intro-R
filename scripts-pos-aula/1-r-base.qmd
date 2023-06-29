@@ -197,6 +197,13 @@ conjunto_2
 c("1", 2, 3) 
 
 c(1, 2, TRUE) 
+
+c(TRUE, 1, "1")
+
+x <- 1L
+class(x)
+
+# LÓGICO -> INTEIRO -> NUMERICO -> TEXTO
 ```
 
 -   Podemos fazer operações com os vetores:
@@ -206,7 +213,7 @@ c(1, 2, TRUE)
 ano_nascimento_irmaos <- c(1993, 1998, 2001, 2012, 2012)
 
 # subtração com cada elemento do vetor:
-idade_irmaos <- 2022 - ano_nascimento_irmaos
+idade_irmaos <- 2023 - ano_nascimento_irmaos
 
 # ver o resultado
 idade_irmaos
@@ -217,6 +224,9 @@ idade_irmaos
 ```{r}
 primeiro_semestre <- c("Janeiro", "Fevereiro", "Março",
                        "Abril", "Maio", "Junho")
+
+
+primeiro_semestre_arrumado <- c("Mes zero", primeiro_semestre)
 
 ```
 
@@ -235,16 +245,35 @@ primeiro_semestre[1]
 # primeiro elemento até o segundo
 primeiro_semestre[1:2] 
 
+# pegar o primeiro e terceiro elemento
+primeiro_semestre[c(1,3)]
+
 # remove o elemento 1
 primeiro_semestre[-1] 
+
+fev_ate_junho <- primeiro_semestre[-1] 
 
 # seleciona o elemento seis até o quatro 
 # (e muda a ordem dos elementos)
 primeiro_semestre[6:4]
 
+
+# atualizar janeiro para JANEIRO
+
+primeiro_semestre[1] <- "JANEIRO"
+
+primeiro_semestre
+
 ```
 
 ## NA - Not Available
+
+```{r}
+# extra - explorar os dados
+library(visdat)
+vis_miss(starwars)
+```
+
 
 -   Uma característica importante do R que pode dificultar a comparação são os valores ausentes ou `NA` (não disponíveis).
 
@@ -253,9 +282,23 @@ primeiro_semestre[6:4]
 -   Operações envolvendo um valor desconhecido também será desconhecido. Exemplo:
 
 ```{r}
+
+library(tidyverse)
+starwars # |> View()
+
+NA
+
 vetor_com_na <- c(NA, 1, 5, 2, 5, NA)
 
 sum(vetor_com_na) # somar os valores do vetor
+
+# REMOVER NA'S PARA FAZER A CONTA
+sum(vetor_com_na, na.rm = TRUE)
+# min, max, sd, var, mean, median
+# Funcoes basicas do R para estatistica descritiva
+
+
+sum(vetor_com_na, na.rm = FALSE)
 ```
 
 -   `is.na()` é a função que testa se um objeto é NA.
@@ -264,7 +307,7 @@ sum(vetor_com_na) # somar os valores do vetor
 is.na(vetor_com_na)
 ```
 
-## Tarefa em grupo:
+## Tarefa em grupo: (ENVIAR PARA TREINAR NA QUINTA)
 
 1.  Crie um vetor com os valores das alturas de todas as pessoas do grupo. Salve ele em um objeto chamado `valores_alturas`:
 
@@ -327,6 +370,7 @@ help(sum)
 
 -   E se ainda tiver dúvidas, pergunte para a comunidade (há grupos no Telegram e outras redes sociais).
 
+
 ## Instalar pacotes
 
 -   Pacotes são coleções de funções, dados e documentação que estendem as capacidades do `R` básico.
@@ -335,7 +379,7 @@ help(sum)
 
 -   Você só precisa instalar o pacote uma vez, mas precisa carregá-lo sempre que começar uma nova sessão.
 
--   Instalação de Pacotes: `install.packages("nome-do-pacote")`. Para instalar o pacote use as aspas.
+-   Instalação de Pacotes: `install.packages("nome-do-pacote")`. Para instalar o pacote **use as aspas**.
 
 ```{{r}}
 install.packages("tidyverse")
@@ -345,4 +389,25 @@ install.packages("tidyverse")
 
 ```{r, eval=TRUE, message=FALSE}
 library(tidyverse)
+```
+
+
+```{r}
+# quero usar a funcao write_bib do pacote knitr
+knitr::write_bib()
+
+# equivalente
+library(knitr)
+write_bib()
+```
+
+
+## Citando pacotes
+
+```{r}
+citation("tidyverse")
+
+# cria um arquivo que pode ser importado para a biblioteca de refencias
+knitr::write_bib(x = c("tidyverse", "abjData"), 
+                 file = "bibliografia.bib")
 ```
