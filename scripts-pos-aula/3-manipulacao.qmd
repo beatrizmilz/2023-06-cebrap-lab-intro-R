@@ -1,0 +1,688 @@
+---
+title: "Tópico 3 - Manipulação de dados com dplyr"
+date: "`r Sys.Date()`"
+author: "Beatriz Milz"
+---
+
+Vamos começar carregando os pacotes que vamos utilizar neste script.
+
+```{r message=FALSE}
+library(tidyverse)
+```
+
+Então podemos importar a base de dados que vamos utilizar:
+
+```{r message=FALSE}
+dados_pnud <- read_csv2("../dados/base_pnud_min.csv")
+```
+
+Quais são as informações disponíveis na base?
+
+```{r message=FALSE}
+dicionario_pnud <- read_csv2("../dados/dicionario_base_pnud_min.csv")
+dicionario_pnud  |> knitr::kable()
+```
+
+Podemos ver a estrutura da base de dados usando a função `glimpse()`:
+
+```{r}
+glimpse(dados_pnud)
+```
+
+Podemos ver os nomes das colunas da base de dados usando a função `names()`:
+
+```{r}
+names(dados_pnud)
+```
+
+## dplyr
+
+- `select()`: seleciona colunas da base de dados
+- `filter()`: filtra linhas da base de dados
+- `arrange()`: reordena as linhas da base de dados
+- `mutate()`: cria novas colunas da base de dados (ou atualiza as colunas existentes)
+- `group_by()` + `summarise()`: agrupa e sumariza da base de dados
+
+## select
+
+Podemos selecionar colunas da base de dados com a função `select()`.
+
+Sintaxe: select(nome_da_base, regras_para_selecionar_colunas)
+
+Selecionando uma coluna:
+
+```{r}
+select(dados_pnud, muni_nm)
+```
+
+Obs: Enquanto a gente não usar a atribuição `<-`, o objeto não é alterado!
+
+Selecionando várias colunas:
+
+```{r}
+select(dados_pnud, muni_nm, uf_sigla, pop)
+```
+
+A função select respeita a ordem das colunas:
+
+```{r}
+select(dados_pnud, uf_sigla, muni_nm, pop)
+```
+
+O operador `:` pode ser usado aqui para selecionar uma sequência de colunas:
+
+```{r}
+select(dados_pnud, muni_nm:regiao_nm, pop)
+```
+
+Podemos selecionar colunas por exclusão:
+
+```{r}
+select(dados_pnud, -muni_id)
+```
+
+
+```{r}
+# não misturar! nesse caso ele só vai remover o muni_id
+select(dados_pnud, -muni_id, uf_sigla, pop)
+```
+
+```{r}
+select(dados_pnud, -muni_id, -uf_sigla, -pop)
+```
+
+```{r}
+select(dados_pnud, -c(muni_id, uf_sigla, pop))
+```
+
+```{r}
+# se precisar fazer sequencias para remover,
+# lembrar de criar um vetor!
+select(dados_pnud, -c(muni_nm:idhm_r)) 
+```
+
+```{r}
+select(dados_pnud, starts_with("idhm"))
+```
+
+```{r}
+select(dados_pnud, contains("muni"))
+```
+
+
+
+## arrange
+
+
+Podemos ordenar a base de dados com a função `arrange()`.
+
+Sintaxe: arrange(nome_da_base, coluna_para_usar_para_ordenar)
+
+O padrão de ordenação é crescente:
+
+```{r}
+arrange(dados_pnud, pop) 
+```
+
+Para ordenar de forma decrescente, podemos usar a função `desc()`:
+```{r}
+arrange(dados_pnud, desc(pop))
+```
+
+Podemos ordenar de acordo com os valores de duas colunas:
+
+```{r}
+arrange(dados_pnud, desc(ano), desc(pop)) 
+# não usar o c() para selecionar
+arrange(dados_pnud, desc(ano), regiao_nm, uf_sigla, desc(pop))
+```
+
+A ordenação de textos segue a ordem alfabética:
+
+```{r}
+arrange(dados_pnud, muni_nm)
+```
+
+## pipe
+
+É comum fazer mais de uma operação em sequência. Por exemplo: selecionar colunas, e depois ordenar!
+
+Objetivo: gerar uma base que tem as colunas referentes ao ano, sigla da UF, nome do município e população. Essa base deve estar ordenada por ano e população.
+
+```{r}
+# forma 1 - criando objetos intermediários
+base_selecionada <- select(dados_pnud, ano, uf_sigla,  muni_nm, pop)
+arrange(base_selecionada, ano, pop)
+
+# forma 2 - aninhando funções
+# não é a melhor forma
+arrange(select(dados_pnud, ano, uf_sigla,  muni_nm, pop), ano, pop)
+```
+
+Podemos reescrever esse código com o pipe. O pipe conecta as operações, passando o resultado da última operação como primeiro argumento das próximas etapas.
+
+- `|>` é o pipe do base R, funciona a partir da versão 4.1 do R.
+
+- `%>%` é a versão do tidyverse.
+
+```{r}
+# atalho: ctrl shift m
+# |> |> |> |> |> |> |> |> |> |> |> |> |> 
+# %>% %>% %>% %>% %>% %>% %>% %>% %>% %>% 
+```
+
+
+```{r}
+dados_pnud |> 
+  select(ano, uf_sigla,  muni_nm, pop) |> 
+  arrange(ano, pop) 
+  # count(ano, uf_sigla)
+
+select(dados_pnud, ano, uf_sigla, muni_nm, pop) |> 
+  arrange(ano, pop)
+```
+
+## Pausa nos verbos: distinct e unique
+
+Quais são os valores únicos/distintos em uma coluna?
+
+
+- A base dados_pnud possui informações referentes à quais anos?
+
+```{r}
+distinct(dados_pnud, ano) # TIDYVERSE, RETORNA UMA TIBBLE/BASE
+unique(dados_pnud$ano) # R BASE, RETORNA UM CONJUNTO DOS VALORES!
+```
+- A base dados_pnud possui informações referentes à quais UFs?
+
+```{r}
+distinct(dados_pnud, uf_sigla)
+unique(dados_pnud$uf_sigla)
+```
+Exemplo usando pipe!
+```{r}
+dados_pnud |> 
+  filter(regiao_nm == "Centro-Oeste") |> 
+  distinct(uf_sigla)
+```
+
+Não conseguimos usar o pipe com o unique().
+
+
+**Lógica de funções pipeáveis**:
+Função tem como primeiro argumento uma base de dados.
+Sempre devolve/retorna uma base de dados. 
+
+
+
+
+## filter
+
+- Para entender filtros, precisamos conhecer alguns conceitos de lógica. 
+
+### Comparações lógicas
+
+- Comparações lógicas:
+
+```{r}
+# == significa: uma coisa é igual a outra?
+x <- 1
+
+# Teste com resultado verdadeiro
+x == 1
+
+# Teste com resultado falso
+x == 2
+```
+
+- Exemplo com filtros: Filtrando uma coluna da base: O que for TRUE (verdadeiro) será mantido!
+
+- Filtrar apenas informações referentes ao ano de 2010:
+
+```{r}
+dados_pnud %>% 
+  filter(ano == 2010) 
+```
+
+- Filtrar apenas informações referentes ao ano de 2010, e que sejam do estado de SP:
+
+```{r}
+dados_pnud %>% 
+  filter(ano == 2010, uf_sigla == "SP") |> # atenda as duas condicoes!
+  arrange(desc(pop)) 
+```
+
+```{r}
+dados_pnud |> 
+  filter(ano == 2010, uf_sigla == "SP" | regiao_nm == "Norte") 
+```
+
+Exemplo de empilhamento para dúvida da Andressa:
+
+tidyr: pivotagem
+
+```{r}
+dados_pnud |> 
+  pivot_longer(cols = c(idhm:pop))
+
+
+base_pnud_longa <- dados_pnud |> 
+  pivot_longer(cols = c(idhm:idhm_r), names_to = "variaveis", values_to = "valores") 
+
+
+base_pnud_longa |> 
+  filter(valores >= 0.80)
+
+# pivot_wider()
+
+base_pnud_longa |> 
+  pivot_wider(names_from = variaveis, values_from = valores)
+```
+
+
+
+- Comparações lógicas:
+
+```{r}
+x <-1
+# maior que 
+x > 3
+x > 0
+# menor que
+x < 3
+x < 0
+
+
+x > 1
+x >= 1 # Maior ou igual à
+
+x < 1
+x <= 1 # menor ou igual à 
+
+```
+
+
+Exemplos com filtros:
+
+- Filtrar apenas municípios que, no ano de 2010, tinham uma população igual ou maior à 1 milhão, e ordenar a base pela população (de forma decrescente).
+
+```{r}
+dados_pnud |> 
+  filter(ano == 2010, pop >= 1000000) |> 
+  arrange(desc(pop))
+```
+
+- Comparações lógicas:
+
+```{r}
+# != significa diferente de:
+x != 2
+x != 1
+```
+
+Exemplos com filtros:
+
+- Filtrar apenas dados que não sejam do ano de 1991.
+
+```{r}
+dados_pnud |> 
+  filter(ano != 1991) # ano diferente de 1991
+```
+
+
+
+- Comparações lógicas:
+
+```{r}
+# operador %in%
+x %in% c(1, 2, 3)
+x %in% c(2, 3, 4)
+```
+
+Exemplos com filtros:
+
+- Filtrar apenas dados de estados das pessoas participantes do curso:
+
+```{r}
+dados_pnud |> 
+  filter(uf_sigla %in% c("SP", "RJ")) # manter
+
+
+dados_pnud |> 
+  filter(!uf_sigla %in% c("SP", "RJ")) # remover
+```
+
+### Operadores lógicos - &, | , !
+
+### & - E 
+
+- Para ser verdadeiro, os dois lados precisam resultar em TRUE:
+
+```{r}
+x <- 5
+x >= 3 & x <=7
+# TRUE & TRUE = TRUE
+
+
+y <- 2
+y >= 3 & y <= 7
+# FALSE & TRUE = FALSE
+```
+
+Exemplos com filtros:
+
+- No filter, a virgula funciona como o &!
+
+- Filtrar apenas informações referentes ao ano de 2010, e que sejam do estado de SP:
+
+```{r}
+dados_pnud %>% 
+  filter(ano == 2010 , uf_sigla == "SP") 
+```
+
+
+
+
+### | - OU
+
+-  Para resultar TRUE, apenas um dos lados precisa ser verdadeiro
+
+```{r}
+y <- 2
+y >= 3
+y <= 7
+
+y >= 3 | y <= 7
+
+y >= 3 | y <= 0
+```
+
+
+Exemplos com filtros:
+
+- Filtrar informações referentes ao ano de 2010 OU que sejam do estado de SP:
+
+```{r}
+dados_pnud %>% 
+  filter(ano == 2010 | uf_sigla == "SP") 
+```
+
+
+
+### ! - NOT
+
+-  Negação - É o "contrário". 
+
+```{r}
+!TRUE
+
+!FALSE
+```
+
+
+Exemplos com filtros:
+
+- Filtrar informações que não sejam do estado de São Paulo ou Rio de Janeiro:
+
+```{r}
+dados_pnud |> 
+  filter(!uf_sigla %in% c("SP", "RJ"))
+```
+
+### filtros e NA?
+
+- A função filter, por padrão, remove os NAs. Ex:
+
+```{r}
+df <- tibble(x = c(1, 2, 3, NA))
+df
+
+filter(df, x > 1)
+
+# manter os NAs!
+filter(df, x > 1 | is.na(x))
+```
+
+- E como remover NAs? 
+
+```{r}
+df %>% 
+  filter(!is.na(x))
+
+# o código anterior é equivalente à 
+df %>% 
+  drop_na(x)
+```
+
+
+### filtrando textos
+
+```{r}
+textos <- c("a", "aa", "abc", "bc", "A", NA)
+textos
+
+# string é uma palavra usada para se referir a texto
+str_detect(textos, pattern =  "a")
+
+dados_pnud$muni_nm |>
+  str_to_lower() |>  # deixar minusculo
+  abjutils::rm_accent() |>  # remover acentuacao
+  str_replace_all("-", " ") |> # substituir - por espaço
+  str_remove_all("'") # remover todos os '
+
+library(janitor)
+dados_pnud$muni_nm |> make_clean_names()
+
+```
+
+Filtrar municípios que possuem o padrão `SÃO` no nome:
+
+```{r}
+dados_pnud |> 
+  filter(str_detect(muni_nm, "SÃO"))
+```
+
+Filtrar municípios que possuem o padrão `SÃO` ou `São` no nome:
+
+```{r}
+
+
+dados_pnud |> 
+  filter(str_detect(muni_nm, "SÃO|DIADEMA|OSASCO")) 
+
+
+vetor_detectar <- c("^SÃO", "DIADEMA", "OSASCO", "SÃO ", " SÃO")
+
+regras <- paste0(vetor_detectar, collapse = "|")
+
+dados_pnud |> 
+  filter(str_detect(muni_nm, pattern = regras)) 
+```
+
+```{r}
+pnud_2010 <- dados_pnud |> 
+  filter(ano == 2010)
+
+writexl::write_xlsx(pnud_2010, "pnud_2010.xlsx")
+```
+
+
+
+## mutate
+
+- Podemos modificar colunas e criar novas colunas usando a função `mutate()`.
+
+
+base_de_dados |>
+  mutate(nome_da_coluna_criar_ou_atualizar = operacao_para_salvar_na_coluna)
+
+
+- Exemplo: vamos modificar a coluna pop para que ela armazene a população em milhares.
+
+```{r}
+dados_pnud |> 
+  mutate(pop = pop/1000) 
+```
+
+- Exemplo: vamos criar uma nova coluna chamada `pop_mil` para que ela armazene a população em milhares.
+
+```{r}
+dados_pnud |> 
+  mutate(pop_mil = pop/1000) 
+```
+
+```{r}
+dados_pnud |> 
+  mutate(muni_nm_limpo = make_clean_names(muni_nm)) # |> View()
+```
+
+
+
+
+- Como arredondar? Função `round()`. Vamos experimentar arredondar a coluna de expectativa de vida para ter apenas 1 casa decimal.
+
+```{r}
+dados_pnud |> 
+  mutate(espvida = round(espvida, 1))
+```
+
+- Classificar:  A função `ifelse()` é uma ótima ferramenta para fazermos classificação com duas categorias. Ex:
+
+```{r}
+dados_pnud %>%
+  filter(ano == 2010) |> 
+  select(uf_sigla, muni_nm, espvida) |>
+  mutate(media_espvida = mean(espvida),
+         maior_que_a_media_espvida = if_else(espvida >= media_espvida, # teste logico
+                                             "Sim", # valor a guardar caso seja TRUE
+                                             "Não" # valor a guardar caso seja FALSE
+                                             )) #|> 
+  # filter(maior_que_a_media_espvida == "Sim")
+```
+
+- Classificar: a função `case_when()` é interessante para fazer classificação com várias categorias. Ex: classificar a coluna de expectativa de vida segundo faixas de idade
+
+```{r}
+dados_classificados_por_espvida <- dados_pnud %>%
+  select(ano, uf_sigla, muni_nm, espvida) |>
+  mutate(class_espvida  = case_when(
+    espvida >= 50 & espvida < 60 ~ "50 - 59 anos",
+    espvida >= 60 & espvida < 70 ~ "60 - 69 anos",
+    espvida >= 70 & espvida < 80 ~ "70 - 79 anos",
+    TRUE ~ "CLASSIFICAR"
+  )) 
+```
+
+- E como podemos usar esses dados classificados? Vamos aprender uma introdução sobre gráficos na última aula.
+
+```{r}
+dados_classificados_por_espvida |> 
+  count(ano, class_espvida) |> 
+  ggplot() +
+  aes(y = class_espvida, x = n) +
+  geom_col() +
+  facet_wrap(vars(ano))
+```
+
+## summarise
+
+- Podemos criar resumos da base com a função `summarise()`
+
+- Resumindo a base: qual é a média da expectativa de vida?
+
+```{r}
+dados_pnud |> 
+  summarise(media_espvida = mean(espvida))
+```
+
+Isso não ajuda tanto pois obtemos uma informação para a base completa... e como sabemos a média por ano?
+
+## group_by
+
+- Podemos agrupar os dados com `group_by`.
+
+- Agrupando por ano:
+
+```{r}
+dados_pnud |> 
+  group_by(ano)
+```
+
+## group_by + summarise
+
+- Resumindo a base: qual é a média da expectativa de vida por ano?
+
+```{r}
+dados_pnud |> 
+  group_by(ano) |> 
+  summarise(media_espvida = mean(espvida))
+
+
+dados_pnud |> 
+  group_by(regiao_nm, ano) |> # podemos usar mais que uma coluna para agrupar
+  summarise(media_espvida = mean(espvida))
+
+
+dados_pnud |> 
+  group_by(ano, regiao_nm) |> # podemos usar mais que uma coluna para agrupar
+  summarise(media_espvida = mean(espvida)) |> 
+  ungroup() # desagrupar
+  
+```
+
+- Várias sumarizações:
+
+```{r}
+dados_pnud |> 
+  group_by(ano, regiao_nm) |> 
+  summarise(media_espvida = mean(espvida), 
+            mediana_espvida = median(espvida),
+            variancia_espvida = var(espvida),
+            desvio_padrao_espvida = sd(espvida),
+            min_espvida = min(espvida),
+            max_espvida = max(espvida),
+            quant_muni = n())
+
+# combine words
+
+# n() tidyverse - conta quantas linhas tem na base
+```
+
+```{r}
+library(skimr)
+skim(dados_pnud)
+
+skim(dados_pnud) |> 
+  yank("numeric")
+```
+
+
+
+## count
+
+```{r}
+dados_pnud |> 
+  group_by(ano, regiao_nm) |> 
+  summarise(numero = n())
+```
+
+```{r}
+dados_pnud |> 
+  count(ano, regiao_nm, sort = TRUE)
+
+# fazer tabela de frequencia
+dados_classificados_por_espvida |> 
+  count(ano, class_espvida)
+```
+
+
+- A função count é uma função útil para contar elementos por grupo.
+
+```{r}
+dados_classificados_por_espvida |> 
+  count(ano)
+
+dados_classificados_por_espvida |> 
+  count(ano, class_espvida)
+```
+
