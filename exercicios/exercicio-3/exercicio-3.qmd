@@ -43,12 +43,10 @@ dados_pnud <- read_csv2("dados/base_pnud_min.csv")
 Escreva o código para gerar essa tabela no campo de código abaixo:
 
 ```{r}
-dados_pnud |> 
-filter(ano == 2010) |> 
- group_by(regiao_nm) |> 
- summarise(soma_pop_milhoes = round(sum(pop)/1000000, 2)) |> 
- arrange(desc(soma_pop_milhoes)) |> 
- kable(col.names = c("Região", "População em milhões (2010)"))
+
+
+
+
 ```
 
 
